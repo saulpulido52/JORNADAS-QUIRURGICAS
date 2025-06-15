@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 const HomePage = () => {
-  const heroImageUrl = 'https://images.unsplash.com/photo-1550831107-1553da8c8464?q=80&w=2574&auto=format&fit=crop';
+  const heroImageUrl = '/cirugia-imss.jpg';
 
   // Estos son estilos en línea para los colores personalizados que no vienen en Bootstrap
   const brandColors = {
@@ -22,7 +22,7 @@ const HomePage = () => {
             <img src={heroImageUrl} alt="Médico revisando a un paciente" className="card-img-top" style={{ height: '300px', objectFit: 'cover' }}/>
             <div className="card-img-overlay d-flex align-items-center justify-content-center" style={{ backgroundColor: 'rgba(0, 0, 0, 0.4)' }}>
               <h1 className="display-4 fw-bold text-white text-center">
-                Jornadas Quirúrgicas IMSS
+                Jornadas Quirúrgicas IMSS Sonora
               </h1>
             </div>
           </div>
