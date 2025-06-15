@@ -29,7 +29,7 @@ const HomePage = () => {
           
           <div className="card-body p-5 text-center">
             <h2 className="card-title h1" style={{ color: brandColors.darkGreen }}>
-              Cirugía para Todas
+              Cirugía para todos y todas
             </h2>
             <p className="card-text fs-5 text-secondary">
               "Salud y Calidad de Vida para tí"
