@@ -21,7 +21,7 @@ const HomePage = () => {
           <div className="position-relative">
             <img src={heroImageUrl} alt="Médico revisando a un paciente" className="card-img-top" style={{ height: '300px', objectFit: 'cover' }}/>
             <div className="card-img-overlay d-flex align-items-center justify-content-center" style={{ backgroundColor: 'rgba(0, 0, 0, 0.4)' }}>
-              <h1 className="display-4 fw-bold text-white text-center">
+              <h1 className=" fw-bold text-white text-center">
                 QUIRURGIMSSONORA
               </h1>
             </div>
@@ -38,7 +38,7 @@ const HomePage = () => {
               ¿Tienes pendiente que te realicen una cirugía?
             </p>
             <p className="fs-5 text-secondary mb-4">
-              (Verrugas, Lipomas, Quistes, Abesos, Catarata, Hernia Umbilical)
+              (Verrugas, Lipomas, Quistes, Abscesos, Catarata, Hernia Umbilical, Túnel del carpo, Cirugías de hombro, Meniscos)
             </p>
             
             {/* Un botón de Bootstrap. 'btn-danger' es un color parecido al marrón que teníamos */}
@@ -47,9 +47,9 @@ const HomePage = () => {
             </Link>
             
             <p className="mt-4">
-              <a href="/privacidad" className="text-secondary">
+              <span className="text-secondary">
                 Aviso de privacidad
-              </a>
+              </span>
             </p>
           </div>
         </section>

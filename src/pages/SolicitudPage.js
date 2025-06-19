@@ -28,7 +28,7 @@ const SolicitudPage = () => {
     
     const steps = ["Datos Personales", "Servicio y Diagnóstico", "Antecedentes"];
     const SEGURIDAD_SOCIAL_OPTIONS = ["Instituto Mexicano del Seguro Social", "IMSS BIENESTAR", "No pertenezco a ninguna institución"];
-    const CIRUGIAS_OPTIONS = ["Verrugas", "Lipomas", "Quistes", "Abscesos", "Catarata", "Hernia Umbilical"];
+    const CIRUGIAS_OPTIONS = ["Verrugas", "Lipomas", "Quistes", "Abscesos", "Catarata", "Hernia Umbilical", "Túnel del carpo", "Cirugías de hombro", "Meniscos"];
 
     // 2. LÓGICA DE VALIDACIÓN
     const validateStep = () => {
