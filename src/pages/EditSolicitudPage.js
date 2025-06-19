@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+// --- CORRECCIÓN AQUÍ: 'Link' ha sido eliminado ---
+import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../components/AuthContext';
 import Stepper from '../components/Stepper';
 import { hospitalesSonora } from '../data/hospitales';
@@ -116,7 +117,7 @@ const EditSolicitudPage = () => {
                     <div className="card-body p-4 p-md-5">
                         <Stepper currentStep={step} steps={steps} />
                         <form onSubmit={handleSubmit}>
-                            {/* PASO 1 */}
+                            {/* El JSX de todos los pasos es una copia del de SolicitudPage.js */}
                             {step === 1 && (
                                 <>
                                     <h5>Datos de la persona que solicita el tratamiento</h5><hr className="my-3" />
@@ -136,7 +137,6 @@ const EditSolicitudPage = () => {
                                     <div className="row g-3"><div className="col-md-6"><label htmlFor="calle" className="form-label">Calle*</label><input type="text" className={`form-control ${errors.calle && 'is-invalid'}`} id="calle" name="calle" value={formData.calle} onChange={handleInputChange} />{errors.calle && <div className="invalid-feedback">{errors.calle}</div>}</div><div className="col-md-3"><label htmlFor="numeroExterior" className="form-label">Número exterior*</label><input type="text" className={`form-control ${errors.numeroExterior && 'is-invalid'}`} id="numeroExterior" name="numeroExterior" value={formData.numeroExterior} onChange={handleInputChange} />{errors.numeroExterior && <div className="invalid-feedback">{errors.numeroExterior}</div>}</div><div className="col-md-3"><label htmlFor="numeroInterior" className="form-label">Número Interior</label><input type="text" className="form-control" id="numeroInterior" name="numeroInterior" value={formData.numeroInterior} onChange={handleInputChange} /></div><div className="col-md-4"><label htmlFor="codigoPostal" className="form-label">Código Postal*</label><input type="text" className={`form-control ${errors.codigoPostal && 'is-invalid'}`} id="codigoPostal" name="codigoPostal" value={formData.codigoPostal} onChange={handleInputChange} />{errors.codigoPostal && <div className="invalid-feedback">{errors.codigoPostal}</div>}</div><div className="col-md-4"><label htmlFor="colonia" className="form-label">Colonia*</label><input type="text" className={`form-control ${errors.colonia && 'is-invalid'}`} id="colonia" name="colonia" value={formData.colonia} onChange={handleInputChange} />{errors.colonia && <div className="invalid-feedback">{errors.colonia}</div>}</div><div className="col-md-4"><label htmlFor="municipio" className="form-label">Alcaldía / Municipio*</label><input type="text" className={`form-control ${errors.municipio && 'is-invalid'}`} id="municipio" name="municipio" value={formData.municipio} onChange={handleInputChange} />{errors.municipio && <div className="invalid-feedback">{errors.municipio}</div>}</div><div className="col-md-4"><label htmlFor="estado" className="form-label">Estado*</label><input type="text" className={`form-control ${errors.estado && 'is-invalid'}`} id="estado" name="estado" value={formData.estado} onChange={handleInputChange} />{errors.estado && <div className="invalid-feedback">{errors.estado}</div>}</div></div>
                                 </>
                             )}
-                            {/* PASO 2 */}
                             {step === 2 && (
                                 <>
                                     <h5 className="mb-3">Unidad Médica y Servicio Requerido</h5>
@@ -171,7 +171,6 @@ const EditSolicitudPage = () => {
                                     {formData.tieneDiagnosticoPrevio === 'Sí' && (<div className="ps-3"><div className="mb-3"><label htmlFor="diagnosticoCual" className="form-label">Especifique cuál*</label><textarea className={`form-control ${errors.diagnosticoCual && 'is-invalid'}`} id="diagnosticoCual" name="diagnosticoCual" rows="3" value={formData.diagnosticoCual} onChange={handleInputChange}></textarea>{errors.diagnosticoCual && <div className="invalid-feedback">{errors.diagnosticoCual}</div>}</div><div className="mb-3"><label htmlFor="archivoDiagnostico" className="form-label">Adjunte un archivo con el diagnóstico (PDF, opcional)</label><input className="form-control" type="file" id="archivoDiagnostico" name="archivoDiagnostico" accept=".pdf" onChange={handleInputChange} /><div className="form-text">Para agilizar su trámite, se recomienda adjuntar cualquier documento médico.</div></div></div>)}
                                 </>
                             )}
-                            {/* PASO 3 */}
                             {step === 3 && (
                                 <>
                                     <div className="mb-4"><p className="form-label mb-1">¿Ha sido operado previamente?*</p><div className="form-check"><input className="form-check-input" type="radio" name="operadoPreviamente" id="opSi" value="Sí" onChange={handleInputChange} checked={formData.operadoPreviamente === 'Sí'}/><label className="form-check-label" htmlFor="opSi">Sí</label></div><div className="form-check"><input className="form-check-input" type="radio" name="operadoPreviamente" id="opNo" value="No" onChange={handleInputChange} checked={formData.operadoPreviamente === 'No'}/><label className="form-check-label" htmlFor="opNo">No</label></div>{errors.operadoPreviamente && <div className="text-danger small mt-1">{errors.operadoPreviamente}</div>}</div>
@@ -185,7 +184,6 @@ const EditSolicitudPage = () => {
                                     <div className="mb-3"><p className="form-label mb-1">¿Padece Hipertensión?*</p><div className="form-check"><input className="form-check-input" type="radio" name="padeceHipertension" id="hipSi" value="Sí" onChange={handleInputChange} checked={formData.padeceHipertension === 'Sí'}/><label className="form-check-label" htmlFor="hipSi">Sí</label></div><div className="form-check"><input className="form-check-input" type="radio" name="padeceHipertension" id="hipNo" value="No" onChange={handleInputChange} checked={formData.padeceHipertension === 'No'}/><label className="form-check-label" htmlFor="hipNo">No</label></div>{errors.padeceHipertension && <div className="text-danger small mt-1">{errors.padeceHipertension}</div>}</div>
                                 </>
                             )}
-                            {/* BOTONES DE NAVEGACIÓN */}
                             <div className="d-flex justify-content-between mt-5">
                                 {step > 1 && <button type="button" className="btn btn-secondary" onClick={handlePrev}>Anterior</button>}
                                 <div className="ms-auto">
