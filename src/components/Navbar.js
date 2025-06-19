@@ -17,7 +17,7 @@ const Navbar = () => {
             <div className="container">
                 <NavLink className="navbar-brand d-flex align-items-center" to="/">
                     <FaHeartbeat className="me-2" />
-                    Jornadas Quirúrgicas IMSS
+                    Jornadas Quirúrgicas IMSS SONORA
                 </NavLink>
                 <div className="navbar-nav d-flex flex-row align-items-center">
                     <NavLink className="nav-link me-3" to="/">Inicio</NavLink>

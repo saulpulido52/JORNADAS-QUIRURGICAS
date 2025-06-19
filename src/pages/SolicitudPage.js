@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../components/AuthContext';
 import Stepper from '../components/Stepper';
-import { hospitalesSonora } from '../data/hospitales'; // Importamos la lista de hospitales
+import { hospitalesSonora } from '../data/hospitales';
 
 const SolicitudPage = () => {
     const navigate = useNavigate();
@@ -16,14 +16,19 @@ const SolicitudPage = () => {
         nombreAuxiliar: '', telefonoAuxiliar: '', calle: '', numeroExterior: '', numeroInterior: '', codigoPostal: '', colonia: '', municipio: '', estado: '',
         // Paso 2
         hospitalSeleccionado: '',
-        cuentaConSeguridadSocial: '', institucionSeguridadSocial: '', institucionOtro: '', tieneDiagnosticoPrevio: '', quienProporcionoDiagnostico: '', institucionDiagnostico: '', institucionDiagnosticoOtro: '', archivoDiagnostico: null,
+        institucionSeguridadSocial: '',
+        tipoCirugia: '',
+        tieneDiagnosticoPrevio: '',
+        diagnosticoCual: '',
+        archivoDiagnostico: null,
         // Paso 3
-        operadoPreviamente: '', padeceDiabetes: '', padeceHipertension: '',
+        operadoPreviamente: '', transfusiones: '', alergias: '', alergiasCuales: '', tomaMedicamentos: '', medicamentosCuales: '', padeceDiabetes: '', padeceHipertension: '',
     });
     const [errors, setErrors] = useState({});
     
     const steps = ["Datos Personales", "Servicio y Diagnóstico", "Antecedentes"];
-    const INSTITUCIONES = ["Instituto Mexicano del Seguro Social", "ISSSTE", "SEDENA", "SEMAR", "PEMEX", "IMSS BIENESTAR", "Otro"];
+    const SEGURIDAD_SOCIAL_OPTIONS = ["Instituto Mexicano del Seguro Social", "IMSS BIENESTAR", "No pertenezco a ninguna institución"];
+    const CIRUGIAS_OPTIONS = ["Verrugas", "Lipomas", "Quistes", "Abscesos", "Catarata", "Hernia Umbilical"];
 
     // 2. LÓGICA DE VALIDACIÓN
     const validateStep = () => {
@@ -47,18 +52,22 @@ const SolicitudPage = () => {
         }
         if (step === 2) {
             if (!formData.hospitalSeleccionado) newErrors.hospitalSeleccionado = "Debe seleccionar un hospital.";
-            if (!formData.cuentaConSeguridadSocial) newErrors.cuentaConSeguridadSocial = "Debe seleccionar una opción.";
-            if (formData.cuentaConSeguridadSocial === 'Sí' && !formData.institucionSeguridadSocial) newErrors.institucionSeguridadSocial = "Debe seleccionar una institución.";
-            if (formData.institucionSeguridadSocial === 'Otro' && !formData.institucionOtro.trim()) newErrors.institucionOtro = "Debe especificar la otra institución.";
-            if (!formData.tieneDiagnosticoPrevio) newErrors.tieneDiagnosticoPrevio = "Debe seleccionar una opción.";
-            if (formData.tieneDiagnosticoPrevio === 'Sí' && !formData.quienProporcionoDiagnostico) newErrors.quienProporcionoDiagnostico = "Debe seleccionar quién proporcionó el diagnóstico.";
-            if (formData.quienProporcionoDiagnostico === 'Institución pública' && !formData.institucionDiagnostico) newErrors.institucionDiagnostico = "Debe seleccionar la institución del diagnóstico.";
-            if (formData.institucionDiagnostico === 'Otro' && !formData.institucionDiagnosticoOtro.trim()) newErrors.institucionDiagnosticoOtro = "Debe especificar la otra institución.";
+            if (!formData.institucionSeguridadSocial) newErrors.institucionSeguridadSocial = "Debe seleccionar una opción de seguridad social.";
+            if (!formData.tipoCirugia) newErrors.tipoCirugia = "Debe seleccionar el tipo de cirugía que requiere.";
+            if (!formData.tieneDiagnosticoPrevio) newErrors.tieneDiagnosticoPrevio = "Debe responder si tiene un diagnóstico previo.";
+            if (formData.tieneDiagnosticoPrevio === 'Sí' && !formData.diagnosticoCual.trim()) {
+                newErrors.diagnosticoCual = "Debe especificar cuál es su diagnóstico.";
+            }
         }
         if (step === 3) {
-            if (!formData.operadoPreviamente) newErrors.operadoPreviamente = "Por favor, selecciona una opción.";
-            if (!formData.padeceDiabetes) newErrors.padeceDiabetes = "Por favor, selecciona una opción.";
-            if (!formData.padeceHipertension) newErrors.padeceHipertension = "Por favor, selecciona una opción.";
+            if (!formData.operadoPreviamente) newErrors.operadoPreviamente = "Por favor, seleccione una opción.";
+            if (!formData.transfusiones) newErrors.transfusiones = "Por favor, seleccione una opción.";
+            if (!formData.alergias) newErrors.alergias = "Por favor, seleccione una opción.";
+            if (formData.alergias === 'Sí' && !formData.alergiasCuales.trim()) newErrors.alergiasCuales = "Debe especificar sus alergias.";
+            if (!formData.tomaMedicamentos) newErrors.tomaMedicamentos = "Por favor, seleccione una opción.";
+            if (formData.tomaMedicamentos === 'Sí' && !formData.medicamentosCuales.trim()) newErrors.medicamentosCuales = "Debe especificar los medicamentos.";
+            if (!formData.padeceDiabetes) newErrors.padeceDiabetes = "Por favor, seleccione una opción.";
+            if (!formData.padeceHipertension) newErrors.padeceHipertension = "Por favor, seleccione una opción.";
         }
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
@@ -118,64 +127,54 @@ const SolicitudPage = () => {
                             {/* PASO 2 */}
                             {step === 2 && (
                                 <>
-                                    <h5 className="mb-3">Unidad Médica y Seguridad Social</h5>
+                                    <h5 className="mb-3">Unidad Médica y Servicio Requerido</h5>
                                     <div className="mb-4">
                                         <label htmlFor="hospitalSeleccionado" className="form-label">Seleccione la unidad médica de su preferencia*</label>
-                                        <select 
-                                            className={`form-select ${errors.hospitalSeleccionado && 'is-invalid'}`} 
-                                            id="hospitalSeleccionado" 
-                                            name="hospitalSeleccionado" 
-                                            value={formData.hospitalSeleccionado} 
-                                            onChange={handleInputChange}
-                                        >
+                                        <select className={`form-select ${errors.hospitalSeleccionado && 'is-invalid'}`} id="hospitalSeleccionado" name="hospitalSeleccionado" value={formData.hospitalSeleccionado} onChange={handleInputChange}>
                                             <option value="" disabled>-- Elija un hospital --</option>
-                                            {hospitalesSonora.map(hospital => (
-                                                <option key={hospital.id} value={`${hospital.nombre} - ${hospital.ciudad}`}>
-                                                    {hospital.nombre} - {hospital.ciudad}
-                                                </option>
-                                            ))}
+                                            {hospitalesSonora.map(hospital => (<option key={hospital.id} value={`${hospital.nombre} - ${hospital.ciudad}`}>{hospital.nombre} - {hospital.ciudad}</option>))}
                                         </select>
                                         {errors.hospitalSeleccionado && <div className="invalid-feedback">{errors.hospitalSeleccionado}</div>}
                                     </div>
-                                    <hr />
+
                                     <div className="mb-4">
-                                        <p className="form-label mb-1">¿Cuenta con seguridad social?*</p>
-                                        <div className="form-check"><input className="form-check-input" type="radio" name="cuentaConSeguridadSocial" id="ssSi" value="Sí" onChange={handleInputChange} checked={formData.cuentaConSeguridadSocial === 'Sí'}/><label className="form-check-label" htmlFor="ssSi">Sí</label></div>
-                                        <div className="form-check"><input className="form-check-input" type="radio" name="cuentaConSeguridadSocial" id="ssNo" value="No" onChange={handleInputChange} checked={formData.cuentaConSeguridadSocial === 'No'}/><label className="form-check-label" htmlFor="ssNo">No</label></div>
-                                        {errors.cuentaConSeguridadSocial && <div className="text-danger small mt-1">{errors.cuentaConSeguridadSocial}</div>}
+                                        <p className="form-label mb-1">Seguridad Social*</p>
+                                        {SEGURIDAD_SOCIAL_OPTIONS.map(inst => (
+                                            <div className="form-check" key={inst}>
+                                                <input className="form-check-input" type="radio" name="institucionSeguridadSocial" id={`ss_${inst}`} value={inst} onChange={handleInputChange} checked={formData.institucionSeguridadSocial === inst} />
+                                                <label className="form-check-label" htmlFor={`ss_${inst}`}>{inst}</label>
+                                            </div>
+                                        ))}
+                                        {errors.institucionSeguridadSocial && <div className="text-danger small mt-1">{errors.institucionSeguridadSocial}</div>}
                                     </div>
-                                    {formData.cuentaConSeguridadSocial === 'Sí' && (
-                                        <div className="mb-4 ps-3">
-                                            <p className="form-label mb-1">Institución prestadora de servicios de salud*</p>
-                                            {INSTITUCIONES.map(inst => (<div className="form-check" key={inst}><input className="form-check-input" type="radio" name="institucionSeguridadSocial" id={`ss_${inst}`} value={inst} onChange={handleInputChange} checked={formData.institucionSeguridadSocial === inst} /><label className="form-check-label" htmlFor={`ss_${inst}`}>{inst}</label></div>))}
-                                            {errors.institucionSeguridadSocial && <div className="text-danger small mt-1">{errors.institucionSeguridadSocial}</div>}
-                                            {formData.institucionSeguridadSocial === 'Otro' && (<div className="mt-2"><input type="text" className={`form-control ${errors.institucionOtro && 'is-invalid'}`} name="institucionOtro" placeholder="Específica cual" value={formData.institucionOtro} onChange={handleInputChange} />{errors.institucionOtro && <div className="invalid-feedback">{errors.institucionOtro}</div>}</div>)}
-                                        </div>
-                                    )}
+
+                                    <div className="mb-4">
+                                        <label htmlFor="tipoCirugia" className="form-label">Tipo de cirugía que requiere*</label>
+                                        <select className={`form-select ${errors.tipoCirugia && 'is-invalid'}`} id="tipoCirugia" name="tipoCirugia" value={formData.tipoCirugia} onChange={handleInputChange}>
+                                            <option value="" disabled>-- Seleccione un tipo --</option>
+                                            {CIRUGIAS_OPTIONS.map(cirugia => (<option key={cirugia} value={cirugia}>{cirugia}</option>))}
+                                        </select>
+                                        {errors.tipoCirugia && <div className="invalid-feedback">{errors.tipoCirugia}</div>}
+                                    </div>
+
                                     <hr className="my-4"/>
                                     <h5 className="mb-3">Diagnóstico</h5>
+
                                     <div className="mb-4">
                                         <p className="form-label mb-1">¿Cuenta con un diagnóstico médico previo?*</p>
                                         <div className="form-check"><input className="form-check-input" type="radio" name="tieneDiagnosticoPrevio" id="diagSi" value="Sí" onChange={handleInputChange} checked={formData.tieneDiagnosticoPrevio === 'Sí'}/><label className="form-check-label" htmlFor="diagSi">Sí</label></div>
                                         <div className="form-check"><input className="form-check-input" type="radio" name="tieneDiagnosticoPrevio" id="diagNo" value="No" onChange={handleInputChange} checked={formData.tieneDiagnosticoPrevio === 'No'}/><label className="form-check-label" htmlFor="diagNo">No</label></div>
                                         {errors.tieneDiagnosticoPrevio && <div className="text-danger small mt-1">{errors.tieneDiagnosticoPrevio}</div>}
                                     </div>
+                                    
                                     {formData.tieneDiagnosticoPrevio === 'Sí' && (
                                         <div className="ps-3">
-                                            <div className="mb-4">
-                                                <p className="form-label mb-1">¿Quién se lo proporcionó?*</p>
-                                                <div className="form-check"><input className="form-check-input" type="radio" name="quienProporcionoDiagnostico" id="provPub" value="Institución pública" onChange={handleInputChange} checked={formData.quienProporcionoDiagnostico === 'Institución pública'}/><label className="form-check-label" htmlFor="provPub">Institución pública</label></div>
-                                                <div className="form-check"><input className="form-check-input" type="radio" name="quienProporcionoDiagnostico" id="provPriv" value="Institución privada" onChange={handleInputChange} checked={formData.quienProporcionoDiagnostico === 'Institución privada'}/><label className="form-check-label" htmlFor="provPriv">Institución privada</label></div>
-                                                {errors.quienProporcionoDiagnostico && <div className="text-danger small mt-1">{errors.quienProporcionoDiagnostico}</div>}
+                                            <div className="mb-3">
+                                                <label htmlFor="diagnosticoCual" className="form-label">Especifique cuál*</label>
+                                                <textarea className={`form-control ${errors.diagnosticoCual && 'is-invalid'}`} id="diagnosticoCual" name="diagnosticoCual" rows="3" value={formData.diagnosticoCual} onChange={handleInputChange}></textarea>
+                                                {errors.diagnosticoCual && <div className="invalid-feedback">{errors.diagnosticoCual}</div>}
                                             </div>
-                                            {formData.quienProporcionoDiagnostico === 'Institución pública' && (
-                                                <div className="mb-4 ps-3">
-                                                    <p className="form-label mb-1">Institución pública que proporcionó el diagnóstico*</p>
-                                                    {INSTITUCIONES.map(inst => (<div className="form-check" key={`diag_${inst}`}><input className="form-check-input" type="radio" name="institucionDiagnostico" id={`diag_${inst}`} value={inst} onChange={handleInputChange} checked={formData.institucionDiagnostico === inst} /><label className="form-check-label" htmlFor={`diag_${inst}`}>{inst}</label></div>))}
-                                                    {errors.institucionDiagnostico && <div className="text-danger small mt-1">{errors.institucionDiagnostico}</div>}
-                                                    {formData.institucionDiagnostico === 'Otro' && (<div className="mt-2"><input type="text" className={`form-control ${errors.institucionDiagnosticoOtro && 'is-invalid'}`} name="institucionDiagnosticoOtro" placeholder="Específica cual" value={formData.institucionDiagnosticoOtro} onChange={handleInputChange} />{errors.institucionDiagnosticoOtro && <div className="invalid-feedback">{errors.institucionDiagnosticoOtro}</div>}</div>)}
-                                                </div>
-                                            )}
+
                                             <div className="mb-3">
                                                 <label htmlFor="archivoDiagnostico" className="form-label">Adjunte un archivo con el diagnóstico (PDF, opcional)</label>
                                                 <input className="form-control" type="file" id="archivoDiagnostico" name="archivoDiagnostico" accept=".pdf" onChange={handleInputChange} />
@@ -189,9 +188,45 @@ const SolicitudPage = () => {
                             {/* PASO 3 */}
                             {step === 3 && (
                                 <>
-                                    <div className="mb-3"><p>¿Ha sido operado previamente?</p><div className="form-check"><input className="form-check-input" type="radio" name="operadoPreviamente" id="opSi" value="Si" onChange={handleInputChange} checked={formData.operadoPreviamente === 'Si'}/><label className="form-check-label" htmlFor="opSi">Sí</label></div><div className="form-check"><input className="form-check-input" type="radio" name="operadoPreviamente" id="opNo" value="No" onChange={handleInputChange} checked={formData.operadoPreviamente === 'No'}/><label className="form-check-label" htmlFor="opNo">No</label></div>{errors.operadoPreviamente && <div className="text-danger small mt-1">{errors.operadoPreviamente}</div>}</div>
-                                    <div className="mb-3"><p>¿Padece Diabetes?</p><div className="form-check"><input className="form-check-input" type="radio" name="padeceDiabetes" id="diabSi" value="Si" onChange={handleInputChange} checked={formData.padeceDiabetes === 'Si'}/><label className="form-check-label" htmlFor="diabSi">Sí</label></div><div className="form-check"><input className="form-check-input" type="radio" name="padeceDiabetes" id="diabNo" value="No" onChange={handleInputChange} checked={formData.padeceDiabetes === 'No'}/><label className="form-check-label" htmlFor="diabNo">No</label></div>{errors.padeceDiabetes && <div className="text-danger small mt-1">{errors.padeceDiabetes}</div>}</div>
-                                    <div className="mb-3"><p>¿Padece Hipertensión?</p><div className="form-check"><input className="form-check-input" type="radio" name="padeceHipertension" id="hipSi" value="Si" onChange={handleInputChange} checked={formData.padeceHipertension === 'Si'}/><label className="form-check-label" htmlFor="hipSi">Sí</label></div><div className="form-check"><input className="form-check-input" type="radio" name="padeceHipertension" id="hipNo" value="No" onChange={handleInputChange} checked={formData.padeceHipertension === 'No'}/><label className="form-check-label" htmlFor="hipNo">No</label></div>{errors.padeceHipertension && <div className="text-danger small mt-1">{errors.padeceHipertension}</div>}</div>
+                                    <div className="mb-4">
+                                        <p className="form-label mb-1">¿Ha sido operado previamente?*</p>
+                                        <div className="form-check"><input className="form-check-input" type="radio" name="operadoPreviamente" id="opSi" value="Sí" onChange={handleInputChange} checked={formData.operadoPreviamente === 'Sí'}/><label className="form-check-label" htmlFor="opSi">Sí</label></div>
+                                        <div className="form-check"><input className="form-check-input" type="radio" name="operadoPreviamente" id="opNo" value="No" onChange={handleInputChange} checked={formData.operadoPreviamente === 'No'}/><label className="form-check-label" htmlFor="opNo">No</label></div>
+                                        {errors.operadoPreviamente && <div className="text-danger small mt-1">{errors.operadoPreviamente}</div>}
+                                    </div>
+                                    <div className="mb-4">
+                                        <p className="form-label mb-1">¿Ha tenido transfusiones de sangre?*</p>
+                                        <div className="form-check"><input className="form-check-input" type="radio" name="transfusiones" id="transSi" value="Sí" onChange={handleInputChange} checked={formData.transfusiones === 'Sí'}/><label className="form-check-label" htmlFor="transSi">Sí</label></div>
+                                        <div className="form-check"><input className="form-check-input" type="radio" name="transfusiones" id="transNo" value="No" onChange={handleInputChange} checked={formData.transfusiones === 'No'}/><label className="form-check-label" htmlFor="transNo">No</label></div>
+                                        {errors.transfusiones && <div className="text-danger small mt-1">{errors.transfusiones}</div>}
+                                    </div>
+                                    <div className="mb-4">
+                                        <p className="form-label mb-1">¿Tiene alergias?*</p>
+                                        <div className="form-check"><input className="form-check-input" type="radio" name="alergias" id="alergiaSi" value="Sí" onChange={handleInputChange} checked={formData.alergias === 'Sí'}/><label className="form-check-label" htmlFor="alergiaSi">Sí</label></div>
+                                        <div className="form-check"><input className="form-check-input" type="radio" name="alergias" id="alergiaNo" value="No" onChange={handleInputChange} checked={formData.alergias === 'No'}/><label className="form-check-label" htmlFor="alergiaNo">No</label></div>
+                                        {errors.alergias && <div className="text-danger small mt-1">{errors.alergias}</div>}
+                                        {formData.alergias === 'Sí' && (<div className="mt-2 ps-3"><label htmlFor="alergiasCuales" className="form-label small">¿Cuáles?</label><textarea className={`form-control ${errors.alergiasCuales && 'is-invalid'}`} id="alergiasCuales" name="alergiasCuales" rows="2" value={formData.alergiasCuales} onChange={handleInputChange}></textarea>{errors.alergiasCuales && <div className="invalid-feedback">{errors.alergiasCuales}</div>}</div>)}
+                                    </div>
+                                    <div className="mb-4">
+                                        <p className="form-label mb-1">¿Está tomando algún medicamento actualmente?*</p>
+                                        <div className="form-check"><input className="form-check-input" type="radio" name="tomaMedicamentos" id="medSi" value="Sí" onChange={handleInputChange} checked={formData.tomaMedicamentos === 'Sí'}/><label className="form-check-label" htmlFor="medSi">Sí</label></div>
+                                        <div className="form-check"><input className="form-check-input" type="radio" name="tomaMedicamentos" id="medNo" value="No" onChange={handleInputChange} checked={formData.tomaMedicamentos === 'No'}/><label className="form-check-label" htmlFor="medNo">No</label></div>
+                                        {errors.tomaMedicamentos && <div className="text-danger small mt-1">{errors.tomaMedicamentos}</div>}
+                                        {formData.tomaMedicamentos === 'Sí' && (<div className="mt-2 ps-3"><label htmlFor="medicamentosCuales" className="form-label small">¿Cuáles?</label><textarea className={`form-control ${errors.medicamentosCuales && 'is-invalid'}`} id="medicamentosCuales" name="medicamentosCuales" rows="2" value={formData.medicamentosCuales} onChange={handleInputChange}></textarea>{errors.medicamentosCuales && <div className="invalid-feedback">{errors.medicamentosCuales}</div>}</div>)}
+                                    </div>
+                                    <hr/>
+                                    <div className="mb-4">
+                                        <p className="form-label mb-1">¿Padece Diabetes?*</p>
+                                        <div className="form-check"><input className="form-check-input" type="radio" name="padeceDiabetes" id="diabSi" value="Sí" onChange={handleInputChange} checked={formData.padeceDiabetes === 'Sí'}/><label className="form-check-label" htmlFor="diabSi">Sí</label></div>
+                                        <div className="form-check"><input className="form-check-input" type="radio" name="padeceDiabetes" id="diabNo" value="No" onChange={handleInputChange} checked={formData.padeceDiabetes === 'No'}/><label className="form-check-label" htmlFor="diabNo">No</label></div>
+                                        {errors.padeceDiabetes && <div className="text-danger small mt-1">{errors.padeceDiabetes}</div>}
+                                    </div>
+                                    <div className="mb-3">
+                                        <p className="form-label mb-1">¿Padece Hipertensión?*</p>
+                                        <div className="form-check"><input className="form-check-input" type="radio" name="padeceHipertension" id="hipSi" value="Sí" onChange={handleInputChange} checked={formData.padeceHipertension === 'Sí'}/><label className="form-check-label" htmlFor="hipSi">Sí</label></div>
+                                        <div className="form-check"><input className="form-check-input" type="radio" name="padeceHipertension" id="hipNo" value="No" onChange={handleInputChange} checked={formData.padeceHipertension === 'No'}/><label className="form-check-label" htmlFor="hipNo">No</label></div>
+                                        {errors.padeceHipertension && <div className="text-danger small mt-1">{errors.padeceHipertension}</div>}
+                                    </div>
                                 </>
                             )}
                             

@@ -22,7 +22,7 @@ const HomePage = () => {
             <img src={heroImageUrl} alt="Médico revisando a un paciente" className="card-img-top" style={{ height: '300px', objectFit: 'cover' }}/>
             <div className="card-img-overlay d-flex align-items-center justify-content-center" style={{ backgroundColor: 'rgba(0, 0, 0, 0.4)' }}>
               <h1 className="display-4 fw-bold text-white text-center">
-                Jornadas Quirúrgicas IMSS Sonora
+                QUIRURGIMSSONORA
               </h1>
             </div>
           </div>
@@ -36,6 +36,9 @@ const HomePage = () => {
             </p>
             <p className="fs-4 fw-bold mb-4" style={{ color: brandColors.maroon }}>
               ¿Tienes pendiente que te realicen una cirugía?
+            </p>
+            <p className="fs-5 text-secondary mb-4">
+              (Verrugas, Lipomas, Quistes, Abesos, Catarata, Hernia Umbilical)
             </p>
             
             {/* Un botón de Bootstrap. 'btn-danger' es un color parecido al marrón que teníamos */}
@@ -54,7 +57,7 @@ const HomePage = () => {
         {/* Alerta de Bootstrap */}
         <div className="alert alert-primary mt-5" role="alert">
           <h4 className="alert-heading">Importante</h4>
-          <p>Para iniciar el trámite, asegúrate de tener a la mano tu Número de Seguro Social (NSS) y tu CURP.</p>
+          <p>Para iniciar el trámite, asegúrate de tener tu CURP.</p>
         </div>
 
         {/* Requisitos usando 'list-group' de Bootstrap */}
@@ -70,7 +73,7 @@ const HomePage = () => {
                     </li>
                     <li className="list-group-item d-flex align-items-center fs-5">
                         <span className="badge rounded-pill me-3 fs-6" style={{ backgroundColor: brandColors.maroon }}>2</span>
-                        Ingresa tu Número de Seguro Social y diagnóstico previo si cuentas con él.
+                        Ingresa tu Número de Seguro Social en dado caso si tengas y diagnóstico previo si cuentas con él.
                     </li>
                     <li className="list-group-item d-flex align-items-center fs-5">
                         <span className="badge rounded-pill me-3 fs-6" style={{ backgroundColor: brandColors.maroon }}>3</span>
